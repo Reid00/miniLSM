@@ -1,20 +1,23 @@
-use bytes::BufMut;
 use super::{Block, SIZEOF_U16};
+use bytes::BufMut;
 
 /// Builds a block
 pub struct BlockBuilder {
     /// Offsets of each key-value entries.
     offsets: Vec<u16>,
     /// All key-value pairs in the block.
-    data:Vec<u8>,
+    data: Vec<u8>,
     ///  The expected block size of byte.
     block_size: usize,
 }
 
 impl BlockBuilder {
-    
-    pub fn new(size: usize) -> Self{
-        Self { offsets: Vec::new(), data: Vec::new(), block_size: size}
+    pub fn new(size: usize) -> Self {
+        Self {
+            offsets: Vec::new(),
+            data: Vec::new(),
+            block_size: size,
+        }
     }
 
     /// Return the size of a block except num_of_elements
@@ -29,10 +32,11 @@ impl BlockBuilder {
         assert!(!key.is_empty(), "key must not be empty");
 
         // cur size + new key val size + (key/val len size + num_of_elements size)
-        if self.estimated_size() + key.len() + value.len() + SIZEOF_U16 * 3 > self.block_size 
-            && !self.is_empty() {
-                return false;
-            }
+        if self.estimated_size() + key.len() + value.len() + SIZEOF_U16 * 3 > self.block_size
+            && !self.is_empty()
+        {
+            return false;
+        }
         self.offsets.push(self.data.len() as u16);
 
         // b"22" 字节字符串, 占两个字节，put_u16 两个字节
@@ -54,10 +58,9 @@ impl BlockBuilder {
             panic!("block should not be empty");
         }
 
-        Block { 
-            data: self.data, 
+        Block {
+            data: self.data,
             offsets: self.offsets,
         }
     }
-
 }

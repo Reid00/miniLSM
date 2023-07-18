@@ -1,5 +1,3 @@
-
-
 use crate::block::Block;
 use std::sync::Arc;
 

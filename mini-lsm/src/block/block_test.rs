@@ -4,36 +4,35 @@ use super::builder::BlockBuilder;
 use super::iterator::BlockIterator;
 use super::*;
 
-
 #[test]
-fn test_block_build_single_key()  {
+fn test_block_build_single_key() {
     let mut builder = BlockBuilder::new(16);
     assert!(builder.add(b"233", b"2333"));
     builder.build();
 }
 
 #[test]
-fn test_block_build_full()  {
+fn test_block_build_full() {
     let mut builder = BlockBuilder::new(16);
-    assert!(builder.add(b"11", b"11"));     // use 8 bytes in data
-    // assert!(builder.add(b"3", b"3"));
+    assert!(builder.add(b"11", b"11")); // use 8 bytes in data
+                                        // assert!(builder.add(b"3", b"3"));
     assert!(!builder.add(b"22", b"22"));
     builder.build();
 }
 
 fn key_of(idx: usize) -> Vec<u8> {
-    format!("key_{:03}", idx * 5).into_bytes()    
+    format!("key_{:03}", idx * 5).into_bytes()
 }
 
-fn value_of (idx: usize) -> Vec<u8>{
+fn value_of(idx: usize) -> Vec<u8> {
     format!("value_{:010}", idx).into_bytes()
 }
 
-fn num_of_keys() ->usize {
+fn num_of_keys() -> usize {
     100
 }
 
-fn generate_block() ->Block {
+fn generate_block() -> Block {
     let mut builder = BlockBuilder::new(10000);
 
     for idx in 0..num_of_keys() {
@@ -57,7 +56,7 @@ fn test_block_encode() {
 }
 
 #[test]
-fn test_block_decode()  {
+fn test_block_decode() {
     let block = generate_block();
     let enc = block.encode();
     let dec = Block::decode(&enc);
@@ -65,12 +64,12 @@ fn test_block_decode()  {
     assert_eq!(block.data, dec.data);
 }
 
-fn as_bytes(x: &[u8]) ->Bytes {
+fn as_bytes(x: &[u8]) -> Bytes {
     Bytes::copy_from_slice(x)
 }
 
 #[test]
-fn test_block_iterator(){
+fn test_block_iterator() {
     let block = Arc::new(generate_block());
     let mut iter = BlockIterator::create_and_seek_to_first(block);
 
@@ -83,16 +82,22 @@ fn test_block_iterator(){
                 key,
                 key_of(i),
                 "expected key: {:?}, actual key: {:?}",
-                as_bytes(&key_of(i)), as_bytes(key)
+                as_bytes(&key_of(i)),
+                as_bytes(key)
             );
 
-            assert_eq!(value, value_of(i), "expected value: {:?}, actual value: {:?}", 
-            as_bytes(&value_of(i)), as_bytes(value));
+            assert_eq!(
+                value,
+                value_of(i),
+                "expected value: {:?}, actual value: {:?}",
+                as_bytes(&value_of(i)),
+                as_bytes(value)
+            );
 
             iter.next();
         }
         iter.seek_to_first();
-    }    
+    }
 }
 
 #[test]
@@ -105,13 +110,27 @@ fn test_block_seek_key() {
             let key = iter.key();
             let value = iter.value();
 
-            println!("key: {:?}, value: {:?}", String::from_utf8_lossy(key), String::from_utf8_lossy(value));
+            println!(
+                "key: {:?}, value: {:?}",
+                String::from_utf8_lossy(key),
+                String::from_utf8_lossy(value)
+            );
 
-            assert_eq!(key, key_of(i), "expected key: {:?}, actual key: {:?}",
-            as_bytes(&key_of(i)), as_bytes(key));
+            assert_eq!(
+                key,
+                key_of(i),
+                "expected key: {:?}, actual key: {:?}",
+                as_bytes(&key_of(i)),
+                as_bytes(key)
+            );
 
-            assert_eq!(value, value_of(i), "expected value: {:?}, actual val: {:?}",
-                as_bytes(&value_of(i)), as_bytes(value));
+            assert_eq!(
+                value,
+                value_of(i),
+                "expected value: {:?}, actual val: {:?}",
+                as_bytes(&value_of(i)),
+                as_bytes(value)
+            );
 
             iter.seek_to_key(&format!("key_{:03}", i * 5 + offset).into_bytes());
         }

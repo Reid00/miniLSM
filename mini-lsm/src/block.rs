@@ -1,8 +1,8 @@
 mod builder;
 mod iterator;
 
-use bytes::{Bytes, BufMut, Buf};
 pub use builder::BlockBuilder;
+use bytes::{Buf, BufMut, Bytes};
 pub use iterator::BlockIterator;
 
 pub const SIZEOF_U16: usize = std::mem::size_of::<u16>();
@@ -10,11 +10,11 @@ pub const SIZEOF_U16: usize = std::mem::size_of::<u16>();
 /// A block is the smallest unit of read and caching in LSM tree. It is a collection of sorted
 /// key-value pairs.
 /*
-block struct: 
+block struct:
 |          data         |           offsets         |
 |entry|entry|entry|entry|offset|offset|offset|offset|num_of_elements|
 
-offsets and num: 
+offsets and num:
 |offset|offset|num_of_elements|
 |   0  |  12  |       2       |
 
@@ -27,14 +27,12 @@ Key length and value length are 2 Bytes, which means their maximum length is 655
 
 */
 #[derive(Debug)]
-pub struct Block{
+pub struct Block {
     data: Vec<u8>,
     offsets: Vec<u16>,
 }
 
-
 impl Block {
-
     pub fn encode(&self) -> Bytes {
         let mut buf = self.data.clone();
         let offset_len = self.offsets.len();
@@ -53,7 +51,7 @@ impl Block {
         // println!("entry_offsets_len: {}", entry_offsets_len);
 
         let data_end = data.len() - SIZEOF_U16 - entry_offsets_len * SIZEOF_U16;
-        let offsets_raw = &data[data_end..data.len()-SIZEOF_U16];
+        let offsets_raw = &data[data_end..data.len() - SIZEOF_U16];
 
         let offsets = offsets_raw
             .chunks(SIZEOF_U16)
@@ -61,9 +59,8 @@ impl Block {
             .collect();
 
         let data = data[0..data_end].to_vec();
-        Self { data,  offsets}
+        Self { data, offsets }
     }
-    
 }
 
 #[cfg(test)]

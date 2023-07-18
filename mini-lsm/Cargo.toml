@@ -6,10 +6,13 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow="1"
-bytes="1"
-moka="0.9"
+anyhow = "1"
+bytes = "1"
+moka = "0.9"
 tempfile = "3"
 
 [dev-dependencies]
 tempfile = "3"
+
+[build-dependencies]
+rustfmt = "0.10.0" # 将版本号替换为所需的rustfmt版本

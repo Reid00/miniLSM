@@ -1,10 +1,10 @@
-use std::sync::Arc;
-use bytes::Buf;
 use super::Block;
+use bytes::Buf;
+use std::sync::Arc;
 
 /// Iterates on a block
 #[derive(Debug)]
-pub struct BlockIterator{
+pub struct BlockIterator {
     block: Arc<Block>,
     key: Vec<u8>,
     value: Vec<u8>,
@@ -12,9 +12,8 @@ pub struct BlockIterator{
 }
 
 impl BlockIterator {
-
-    fn new(block: Arc<Block>) -> Self{
-        Self{
+    fn new(block: Arc<Block>) -> Self {
+        Self {
             block,
             key: Vec::new(),
             value: Vec::new(),
@@ -73,7 +72,7 @@ impl BlockIterator {
 
     /// Move to the next key in the block
     pub fn next(&mut self) {
-        self.idx +=1;
+        self.idx += 1;
         self.seek_to(self.idx);
     }
 
@@ -101,7 +100,7 @@ impl BlockIterator {
         let mut high = self.block.offsets.len();
 
         while low < high {
-            let mid = low + (high - low)/2;
+            let mid = low + (high - low) / 2;
             self.seek_to(mid);
             assert!(self.is_valid());
 
@@ -111,8 +110,6 @@ impl BlockIterator {
                 std::cmp::Ordering::Equal => return,
             }
         }
-        self.seek_to(low);        
+        self.seek_to(low);
     }
-
-    
 }
