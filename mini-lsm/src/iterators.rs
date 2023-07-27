@@ -1,5 +1,5 @@
-// pub mod merge_iterator;
-// pub mod two_merge_iterator;
+pub mod merge_iterator;
+pub mod two_merge_iterator;
 
 pub trait StorageIterator {
     /// Get the current value.    
@@ -16,4 +16,4 @@ pub trait StorageIterator {
 }
 
 #[cfg(test)]
-mod test;
+mod iterators_test;

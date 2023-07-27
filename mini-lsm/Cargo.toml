@@ -10,6 +10,10 @@ anyhow = "1"
 bytes = "1"
 moka = "0.9"
 tempfile = "3"
+crossbeam-epoch = "0.9"
+crossbeam-skiplist = "0.1"
+ouroboros = "0.15"
+parking_lot = "0.12"
 
 [dev-dependencies]
 tempfile = "3"
